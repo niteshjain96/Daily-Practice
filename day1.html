@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Day 1 — JS + React | MERN Crack Karo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --card: #16161f;
+      --border: #1e1e2e;
+      --accent: #7c3aed;
+      --accent2: #06b6d4;
+      --accent3: #f59e0b;
+      --text: #e8e8f0;
+      --muted: #6b7280;
+      --green: #10b981;
+      --red: #f43f5e;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo-dot { color: var(--accent); }
+
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .nav-day {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent2);
+    }
+
+    /* HERO */
+    .day-hero {
+      background: linear-gradient(135deg, rgba(124,58,237,0.08) 0%, rgba(6,182,212,0.05) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2rem;
+    }
+
+    .day-hero-inner {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+
+    .day-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .day-sub {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .topic-chips {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      border: 1px solid;
+    }
+    .chip.js { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.35); color: var(--accent3); }
+    .chip.react { background: rgba(6,182,212,0.1); border-color: rgba(6,182,212,0.35); color: var(--accent2); }
+    .chip.basic { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--green); }
+    .chip.intermediate { background: rgba(124,58,237,0.1); border-color: rgba(124,58,237,0.3); color: var(--accent); }
+
+    /* PROGRESS */
+    .meta-bar {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .meta-item {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+    .meta-item strong { color: var(--text); }
+
+    /* MAIN */
+    .main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* QUESTION CARD */
+    .q-card {
+      color: black !important;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .q-card:hover { border-color: rgba(124,58,237,0.35); }
+
+    .q-header {
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .q-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(124,58,237,0.12);
+      border: 1px solid rgba(124,58,237,0.25);
+      width: 2rem;
+      height: 2rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .q-meta { flex: 1; }
+
+    .q-question {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 0.4rem;
+    }
+
+    .q-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+    .qtag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+    }
+    .qtag.js { background: rgba(245,158,11,0.1); color: var(--accent3); }
+    .qtag.react { background: rgba(6,182,212,0.1); color: var(--accent2); }
+    .qtag.basic { background: rgba(16,185,129,0.1); color: var(--green); }
+    .qtag.intermediate { background: rgba(124,58,237,0.1); color: var(--accent); }
+    .qtag.advanced { background: rgba(244,63,94,0.1); color: var(--red); }
+    .qtag.tricky { background: rgba(249,115,22,0.1); color: #f97316; }
+
+    /* SECTIONS */
+    .q-body { padding: 1.2rem 1.5rem; }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .answer {
+      font-size: 0.88rem;
+      line-height: 1.75;
+      margin-bottom: 1.2rem;
+    }
+
+    .answer strong { color: var(--accent2); }
+    .answer em { color: var(--accent3); font-style: normal; }
+
+    .hinglish {
+      border-left: 3px solid var(--accent2);
+      border-radius: 0 6px 6px 0;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1.2rem;
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+
+    .hinglish .hi-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--accent2);
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    /* CODE */
+    .code-block {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .code-bar {
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .code-lang {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--accent3);
+    }
+    .code-dots { display: flex; gap: 0.3rem; }
+    .code-dots span {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border);
+    }
+    .code-dots span:nth-child(1) { background: #ff5f56; }
+    .code-dots span:nth-child(2) { background: #ffbd2e; }
+    .code-dots span:nth-child(3) { background: #27c93f; }
+
+    pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      line-height: 1.7;
+      padding: 1rem 1.2rem;
+      overflow-x: auto;
+    }
+
+    /* Syntax colors */
+    .kw { color: #cba6f7; } /* keywords */
+    .fn { color: #89b4fa; } /* functions */
+    .str { color: #a6e3a1; } /* strings */
+    .num { color: #fab387; } /* numbers */
+    .cm { color: #585b70; font-style: italic; } /* comments */
+    .var { color: #f38ba8; } /* let/const/var */
+    .prop { color: #89dceb; } /* properties */
+    .arr { color: #f9e2af; } /* arrows / operators */
+
+    /* divider */
+    .q-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem 1.5rem;
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid var(--border);
+    }
+    .level-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+    }
+    .level-basic { background: rgba(16,185,129,0.1); color: var(--green); }
+    .level-intermediate { background: rgba(124,58,237,0.1); color: var(--accent); }
+    .level-advanced { background: rgba(244,63,94,0.1); color: var(--red); }
+
+    /* NAV BUTTONS */
+    .day-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 0 1rem;
+    }
+
+    .btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.65rem 1.3rem;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.15s, background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn:hover { border-color: var(--accent); background: rgba(124,58,237,0.08); }
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn.primary:hover { background: #6d28d9; border-color: #6d28d9; }
+
+    .center-day {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.2rem 2rem;
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <span class="logo-dot">◆</span> MERN Crack Karo
+  </a>
+  <div class="nav-right">
+    <span class="nav-day">Day 01 / 180</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="day-hero">
+  <div class="day-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> → Day 1</div>
+    <div class="day-title">Day 1 🚀</div>
+    <div class="day-sub">JavaScript Fundamentals + React Basics — Metro mein padho, interview mein chhaao</div>
+    <div class="topic-chips">
+      <span class="chip js">JavaScript</span>
+      <span class="chip react">React</span>
+      <span class="chip basic">Basic + Intermediate</span>
+    </div>
+    <div class="meta-bar">
+      <span class="meta-item">📅 <strong>Phase 1</strong></span>
+      <span class="meta-item">❓ <strong>10 Questions</strong></span>
+      <span class="meta-item">⏱ <strong>~25 min</strong></span>
+      <span class="meta-item">🎯 Q1–10 of 1800</span>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ======== Q1 ======== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">1</div>
+      <div class="q-meta">
+        <div class="q-question">What is the difference between <code>var</code>, <code>let</code>, and <code>const</code> in JavaScript?</div>
+        <div class="q-tags">
+          <span class="qtag js">JavaScript</span>
+          <span class="qtag basic">Basic</span>
+        </div>
+      </div>
+    </div>
+    <div class="q-body">
+      <div class="section-label">📖 Answer</div>
+      <div class="answer">
+        <strong>var</strong> is function-scoped and gets <em>hoisted</em> to the top of its function with a default value of <code>undefined</code>. It can be re-declared and updated. <br/><br/>
+        <strong>let</strong> is block-scoped (lives only within <code>{}</code>), hoisted but NOT initialized (Temporal Dead Zone), can be updated but NOT re-declared in same scope.<br/><br/>
+        <strong>const</strong> is also block-scoped, must be initialized at declaration, and cannot be reassigned. However, object properties or array elements inside a <code>const</code> can still be mutated.
+      </div>
+
+      <div class="section-label">🗣 Explanation (Hinglish)</div>
+      <div class="hinglish">
+        <span class="hi-label">// Hinglish explanation</span>
+        Yaar, basically teen cheezein hain scope ke baare mein:<br/><br/>
+        <strong>var</strong> — purana zamana, function ke bahar bhi visible ho jaata hai agar function ke andar likha ho — isliye bugs aate the. Hoisting hoti hai matlab variable ka naam upar chala jaata hai par value <code>undefined</code> rehti hai.<br/><br/>
+        <strong>let</strong> — modern way. Sirf apne curly braces <code>{}</code> ke andar valid hai. TDZ (Temporal Dead Zone) matlab declare se pehle access karo toh error milegi.<br/><br/>
+        <strong>const</strong> — constant matlab ek baar assign kiya toh dobara assign nahi kar sakte. Lekin <em>agar object ya array hai</em>, toh uske andar ke values change ho sakte hain. Ye common interview trick hai!
+      </div>
+
+      <div class="section-label">💻 Code Example</div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">javascript</span>
+        </div>
+        <pre><span class="cm">// ---- var example ----</span>
+<span class="kw">function</span> <span class="fn">testVar</span>() {
+  <span class="kw">if</span> (<span class="kw">true</span>) {
+    <span class="var">var</span> x = <span class="num">10</span>;
+  }
+  console.<span class="fn">log</span>(x); <span class="cm">// 10 — var leaks out of if block!</span>
+}
+
+<span class="cm">// ---- let example ----</span>
+<span class="kw">function</span> <span class="fn">testLet</span>() {
+  <span class="kw">if</span> (<span class="kw">true</span>) {
+    <span class="var">let</span> y = <span class="num">20</span>;
+  }
+  console.<span class="fn">log</span>(y); <span class="cm">// ReferenceError: y is not defined</span>
+}
+
+<span class="cm">// ---- const example ----</span>
+<span class="var">const</span> person = { name: <span class="str">"Rahul"</span> };
+person.<span class="prop">name</span> = <span class="str">"Priya"</span>; <span class="cm">// ✅ Allowed — mutating property</span>
+person = {};           <span class="cm">// ❌ TypeError — can't reassign const</span>
+
+<span class="cm">// ---- Hoisting trap (var) ----</span>
+console.<span class="fn">log</span>(a); <span class="cm">// undefined (hoisted, not error)</span>
+<span class="var">var</span> a = <span class="num">5</span>;
+
+console.<span class="fn">log</span>(b); <span class="cm">// ReferenceError — TDZ for let</span>
+<span class="var">let</span> b = <span class="num">5</span>;</pre>
+      </div>
+    </div>
+    <div class="q-divider">
+      <span class="level-badge level-basic">Basic</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;">Scope / Hoisting / TDZ — Interview mein almost hamesha poochha jaata hai</span>
+    </div>
+  </div>
+
+  <!-- ======== Q2 ======== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">2</div>
+      <div class="q-meta">
+        <div class="q-question">What is <code>==</code> vs <code>===</code> in JavaScript? Give examples where they differ.</div>
+        <div class="q-tags">
+          <span class="qtag js">JavaScript</span>
+          <span class="qtag basic">Basic</span>
+          <span class="qtag tricky">Tricky</span>
+        </div>
+      </div>
+    </div>
+    <div class="q-body">
+      <div class="section-label">📖 Answer</div>
+      <div class="answer">
+        <strong>== (Abstract Equality)</strong> performs <em>type coercion</em> before comparing — it converts both values to the same type, then compares.<br/><br/>
+        <strong>=== (Strict Equality)</strong> compares both <em>value AND type</em> with no coercion. This is almost always what you want.
+      </div>
+      <div class="section-label">🗣 Explanation (Hinglish)</div>
+      <div class="hinglish">
+        <span class="hi-label">// Hinglish explanation</span>
+        Double equal (<code>==</code>) — "bhai type dekho mat, value dekho" wali approach. JavaScript pehle dono ko same type mein convert karta hai phir compare karta hai. Ye kabhi kabhi bahut weird results deta hai.<br/><br/>
+        Triple equal (<code>===</code>) — strict comparison, type bhi same hona chahiye aur value bhi. Production code mein hamesha yahi use karo.<br/><br/>
+        Interview tip: <code>null == undefined</code> is <strong>true</strong>, but <code>null === undefined</code> is <strong>false</strong>. Ye classic trick question hai!
+      </div>
+      <div class="section-label">💻 Code Example</div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">javascript</span>
+        </div>
+        <pre><span class="cm">// Type coercion examples</span>
+console.<span class="fn">log</span>(<span class="num">0</span> == <span class="str">""</span>);         <span class="cm">// true  — both coerced to 0</span>
+console.<span class="fn">log</span>(<span class="num">0</span> === <span class="str">""</span>);        <span class="cm">// false — different types</span>
+
+console.<span class="fn">log</span>(<span class="kw">false</span> == <span class="num">0</span>);      <span class="cm">// true  — false coerced to 0</span>
+console.<span class="fn">log</span>(<span class="kw">false</span> === <span class="num">0</span>);     <span class="cm">// false</span>
+
+console.<span class="fn">log</span>(<span class="kw">null</span> == <span class="kw">undefined</span>);  <span class="cm">// true  — special rule</span>
+console.<span class="fn">log</span>(<span class="kw">null</span> === <span class="kw">undefined</span>); <span class="cm">// false — different types</span>
+
+console.<span class="fn">log</span>(<span class="str">"1"</span> == <span class="num">1</span>);         <span class="cm">// true  — string coerced to number</span>
+console.<span class="fn">log</span>(<span class="str">"1"</span> === <span class="num">1</span>);        <span class="cm">// false</span>
+
+<span class="cm">// ⚠️ Always use === in real code</span></pre>
+      </div>
+    </div>
+    <div class="q-divider">
+      <span class="level-badge level-basic">Basic</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;">Type Coercion — Fresher interviews mein must-ask</span>
+    </div>
+  </div>
+
+  <!-- ======== Q3 ======== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">3</div>
+      <div class="q-meta">
+        <div class="q-question">What is a <code>closure</code> in JavaScript? Why is it useful?</div>
+        <div class="q-tags">
+          <span class="qtag js">JavaScript</span>
+          <span class="qtag intermediate">Intermediate</span>
+        </div>
+      </div>
+    </div>
+    <div class="q-body">
+      <div class="section-label">📖 Answer</div>
+      <div class="answer">
+        A <strong>closure</strong> is a function that <em>remembers the variables from its outer scope</em> even after the outer function has finished executing. In JavaScript, every function creates a closure over its surrounding lexical environment.
+        <br/><br/>
+        Closures are useful for: <strong>data privacy</strong> (encapsulation), <strong>factory functions</strong>, <strong>memoization</strong>, <strong>event handlers</strong>, and maintaining state in functional patterns.
+      </div>
+      <div class="section-label">🗣 Explanation (Hinglish)</div>
+      <div class="hinglish">
+        <span class="hi-label">// Hinglish explanation</span>
+        Sochlo ek backpack wala chhota function hai. Jab ye bahar jaata hai apni parent function ke, toh apne parent ke variables apne backpack mein leke jaata hai. Parent function khatam ho gayi, lekin wo variables abhi bhi accessible hain.<br/><br/>
+        Real use case: counter banana jisme count private rahe — bahar se direct change na ho sake. Ya React mein event handlers jisme specific ID remember rahe. Closure = function + uska outer scope ka memory.
+      </div>
+      <div class="section-label">💻 Code Example</div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">javascript</span>
+        </div>
+        <pre><span class="cm">// Basic closure</span>
+<span class="kw">function</span> <span class="fn">makeCounter</span>() {
+  <span class="var">let</span> count = <span class="num">0</span>; <span class="cm">// private variable</span>
+
+  <span class="kw">return</span> {
+    <span class="fn">increment</span>() { count++; },
+    <span class="fn">decrement</span>() { count--; },
+    <span class="fn">getCount</span>()  { <span class="kw">return</span> count; }
+  };
+}
+
+<span class="var">const</span> counter = <span class="fn">makeCounter</span>();
+counter.<span class="fn">increment</span>();
+counter.<span class="fn">increment</span>();
+console.<span class="fn">log</span>(counter.<span class="fn">getCount</span>()); <span class="cm">// 2</span>
+<span class="cm">// count is not accessible directly — it's private!</span>
+
+<span class="cm">// Closure in loop (classic interview trap)</span>
+<span class="kw">for</span> (<span class="var">let</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
+  <span class="fn">setTimeout</span>(() =&gt; console.<span class="fn">log</span>(i), <span class="num">1000</span>);
+  <span class="cm">// With let: prints 0, 1, 2  ✅</span>
+  <span class="cm">// With var: prints 3, 3, 3  ❌ (classic bug!)</span>
+}</pre>
+      </div>
+    </div>
+    <div class="q-divider">
+      <span class="level-badge level-intermediate">Intermediate</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;">Closure — Top 5 JS interview questions mein aata hai</span>
+    </div>
+  </div>
+
+  <!-- ======== Q4 ======== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">4</div>
+      <div class="q-meta">
+        <div class="q-question">Explain <code>event loop</code>, <code>call stack</code>, and <code>microtask queue</code> in JavaScript.</div>
+        <div class="q-tags">
+          <span class="qtag js">JavaScript</span>
+          <span class="qtag intermediate">Intermediate</span>
+        </div>
+      </div>
+    </div>
+    <div class="q-body">
+      <div class="section-label">📖 Answer</div>
+      <div class="answer">
+        JavaScript is <strong>single-threaded</strong> — it can only do one thing at a time. The <em>call stack</em> is where synchronous code executes, LIFO (Last In, First Out).<br/><br/>
+        When async tasks (setTimeout, fetch) complete, their callbacks go to the <em>task queue (macrotask queue)</em>. Promises go to the <em>microtask queue</em>, which has <strong>higher priority</strong> than the task queue.<br/><br/>
+        The <strong>event loop</strong> continuously checks: if the call stack is empty → first drain the microtask queue completely → then take one macrotask. Repeat.
+      </div>
+      <div class="section-label">🗣 Explanation (Hinglish)</div>
+      <div class="hinglish">
+        <span class="hi-label">// Hinglish explanation</span>
+        JS ek hi kaam ek time mein karta hai — single-threaded. Call stack ek plate stack ki tarah hai — jo pehle andar aayi wo baad mein niklegi.<br/><br/>
+        Jab Promise resolve hoti hai, uska callback <strong>microtask queue</strong> mein jaata hai. setTimeout ka callback <strong>macrotask queue</strong> mein. Event loop pehle microtasks khatam karta hai, phir ek macrotask lita hai, phir phir microtasks — ye cycle chalta rehta hai.<br/><br/>
+        Isliye <code>Promise.resolve().then()</code> hamesha <code>setTimeout(fn, 0)</code> se pehle chalega — chahe dono ek saath likhe hon!
+      </div>
+      <div class="section-label">💻 Code Example</div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">javascript</span>
+        </div>
+        <pre>console.<span class="fn">log</span>(<span class="str">"1 — Sync"</span>);              <span class="cm">// Call stack</span>
+
+<span class="fn">setTimeout</span>(() =&gt; {
+  console.<span class="fn">log</span>(<span class="str">"2 — setTimeout"</span>);      <span class="cm">// Macrotask queue</span>
+}, <span class="num">0</span>);
+
+Promise.<span class="fn">resolve</span>().<span class="fn">then</span>(() =&gt; {
+  console.<span class="fn">log</span>(<span class="str">"3 — Promise.then"</span>);    <span class="cm">// Microtask queue</span>
+});
+
+console.<span class="fn">log</span>(<span class="str">"4 — Sync"</span>);              <span class="cm">// Call stack</span>
+
+<span class="cm">// Output order:
+// 1 — Sync
+// 4 — Sync
+// 3 — Promise.then   ← microtask wins!
+// 2 — setTimeout     ← macrotask last</span></pre>
+      </div>
+    </div>
+    <div class="q-divider">
+      <span class="level-badge level-intermediate">Intermediate</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;">Event Loop — Mid-level JS interviews mein zaroor poochha jaata hai</span>
+    </div>
+  </div>
+
+  <!-- ======== Q5 ======== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">5</div>
+      <div class="q-meta">
+        <div class="q-question">What is <code>this</code> in JavaScript? How does it behave in arrow functions vs regular functions?</div>
+        <div class="q-tags">
+          <span class="qtag js">JavaScript</span>
+          <span class="qtag intermediate">Intermediate</span>
+          <span class="qtag tricky">Tricky</span>
+        </div>
+      </div>
+    </div>
+    <div class="q-body">
+      <div class="section-label">📖 Answer</div>
+      <div class="answer">
+        <strong>this</strong> refers to the object that is currently executing the function. Its value depends on <em>how</em> the function is called, not where it's defined (for regular functions).<br/><br/>
+        <strong>Regular function</strong>: <code>this</code> is determined at call time — by the caller object, <code>call/apply/bind</code>, or <code>new</code>. In strict mode with no caller, it's <code>undefined</code>; in sloppy mode it's the global object.<br/><br/>
+        <strong>Arrow function</strong>: does NOT have its own <code>this</code>. It <em>inherits</em> <code>this</code> from the surrounding lexical scope (where it was defined). This makes arrow functions great for callbacks.
+      </div>
+      <div class="section-label">🗣 Explanation (Hinglish)</div>
+      <div class="hinglish">
+        <span class="hi-label">// Hinglish explanation</span>
+        <code>this</code> ka matlab hai — "mujhe kis ne bulaya?" Regular function mein <code>this</code> caller decide karta hai. Agar koi object ne bulaya, toh <code>this</code> woh object hai. Agar directly bulaya, toh global ya undefined.<br/><br/>
+        Arrow function apna <code>this</code> nahi banata — wo bahar se uthaa leta hai jahan likha gaya tha. Isliye React class components mein <code>this.handleClick = this.handleClick.bind(this)</code> ya arrow functions use karte hain — taaki <code>this</code> lost na ho event handler mein.
+      </div>
+      <div class="section-label">💻 Code Example</div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">javascript</span>
+        </div>
+        <pre><span class="var">const</span> obj = {
+  name: <span class="str">"Rahul"</span>,
+
+  <span class="cm">// Regular function — this = obj</span>
+  greetRegular: <span class="kw">function</span>() {
+    console.<span class="fn">log</span>(<span class="str">"Hello"</span>, <span class="kw">this</span>.<span class="prop">name</span>); <span class="cm">// "Hello Rahul" ✅</span>
+  },
+
+  <span class="cm">// Arrow function — this = outer scope (window/global)</span>
+  greetArrow: () =&gt; {
+    console.<span class="fn">log</span>(<span class="str">"Hello"</span>, <span class="kw">this</span>.<span class="prop">name</span>); <span class="cm">// "Hello undefined" ❌</span>
+  },
+
+  <span class="cm">// Arrow in setTimeout — this correctly captured</span>
+  <span class="fn">delayedGreet</span>() {
+    <span class="fn">setTimeout</span>(() =&gt; {
+      console.<span class="fn">log</span>(<span class="str">"Delayed:"</span>, <span class="kw">this</span>.<span class="prop">name</span>); <span class="cm">// "Rahul" ✅ arrow captures obj's this</span>
+    }, <span class="num">1000</span>);
+  }
+};
+
+obj.<span class="fn">greetRegular</span>();
+obj.<span class="fn">greetArrow</span>();
+obj.<span class="fn">delayedGreet</span>();</pre>
+      </div>
+    </div>
+    <div class="q-divider">
+      <span class="level-badge level-intermediate">Intermediate</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;"><code>this</code> — React + class interviews mein guarantee poochha jaata hai</span>
+    </div>
+  </div>
+
+  <!-- ======== Q6 ======== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">6</div>
+      <div class="q-meta">
+        <div class="q-question">What is the difference between <code>null</code> and <code>undefined</code>?</div>
+        <div class="q-tags">
+          <span class="qtag js">JavaScript</span>
+          <span class="qtag basic">Basic</span>
+        </div>
+      </div>
+    </div>
+    <div class="q-body">
+      <div class="section-label">📖 Answer</div>
+      <div class="answer">
+        <strong>undefined</strong> means a variable has been <em>declared but not assigned</em> any value. JavaScript itself sets variables to <code>undefined</code> by default (e.g., function parameters not passed, uninitialized variables).<br/><br/>
+        <strong>null</strong> is an <em>intentional absence of value</em> — a developer explicitly sets it to indicate "no value here." It's a deliberate assignment, not an accident.
+      </div>
+      <div class="section-label">🗣 Explanation (Hinglish)</div>
+      <div class="hinglish">
+        <span class="hi-label">// Hinglish explanation</span>
+        <strong>undefined</strong> = JavaScript bolta hai "bhai, tune declare kiya par kuch diya nahi." Ye JS khud set karta hai.<br/><br/>
+        <strong>null</strong> = developer bolta hai "haan, main jaanta hoon — yahan deliberately kuch nahi hai." Ye tum set karte ho.<br/><br/>
+        Ek aur interesting cheez: <code>typeof null</code> returns <code>"object"</code> — ye JavaScript ka ek purana bug hai! Interview mein jaroor poochhe jaate hain ye.
+      </div>
+      <div class="section-label">💻 Code Example</div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">javascript</span>
+        </div>
+        <pre><span class="var">let</span> a;
+console.<span class="fn">log</span>(a);            <span class="cm">// undefined — declared but not assigned</span>
+
+<span class="var">let</span> b = <span class="kw">null</span>;
+console.<span class="fn">log</span>(b);            <span class="cm">// null — explicitly set</span>
+
+<span class="cm">// typeof</span>
+console.<span class="fn">log</span>(<span class="kw">typeof</span> a);     <span class="cm">// "undefined"</span>
+console.<span class="fn">log</span>(<span class="kw">typeof</span> b);     <span class="cm">// "object" ← famous JS bug!</span>
+
+<span class="cm">// Equality</span>
+console.<span class="fn">log</span>(a == b);       <span class="cm">// true  (both "nullish")</span>
+console.<span class="fn">log</span>(a === b);      <span class="cm">// false (different types)</span>
+
+<span class="cm">// Practical use</span>
+<span class="var">function</span> <span class="fn">getUser</span>(id) {
+  <span class="kw">if</span> (!id) <span class="kw">return</span> <span class="kw">null</span>;    <span class="cm">// deliberate: "no user found"</span>
+}
+<span class="var">let</span> user = <span class="fn">getUser</span>(<span class="kw">null</span>);
+console.<span class="fn">log</span>(user);          <span class="cm">// null</span></pre>
+      </div>
+    </div>
+    <div class="q-divider">
+      <span class="level-badge level-basic">Basic</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;">null vs undefined — Fresher round guarantee</span>
+    </div>
+  </div>
+
+  <!-- ======== Q7 ======== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">7</div>
+      <div class="q-meta">
+        <div class="q-question">What are React Hooks? Why were they introduced? Explain <code>useState</code> and <code>useEffect</code>.</div>
+        <div class="q-tags">
+          <span class="qtag react">React</span>
+          <span class="qtag intermediate">Intermediate</span>
+        </div>
+      </div>
+    </div>
+    <div class="q-body">
+      <div class="section-label">📖 Answer</div>
+      <div class="answer">
+        <strong>React Hooks</strong> (introduced in React 16.8) are functions that let you use React state and lifecycle features in <em>functional components</em> — previously only available in class components.<br/><br/>
+        <strong>useState</strong>: Returns a state variable and a setter. Re-renders the component when state changes.<br/><br/>
+        <strong>useEffect</strong>: Runs side effects (data fetching, subscriptions, DOM manipulation) after render. The <em>dependency array</em> controls when it re-runs: empty <code>[]</code> = only on mount, with deps = when deps change, no array = every render.
+      </div>
+      <div class="section-label">🗣 Explanation (Hinglish)</div>
+      <div class="hinglish">
+        <span class="hi-label">// Hinglish explanation</span>
+        Pehle class components mein state aur lifecycle hota tha — <code>this.state</code>, <code>componentDidMount</code> etc. Bahut boilerplate tha aur <code>this</code> ki problem bhi.<br/><br/>
+        Hooks aaye toh functional components mein bhi sab milne laga. <code>useState</code> se state banao, <code>useEffect</code> se side effects karo (API call, event listener add karna).<br/><br/>
+        <strong>Dependency array</strong> samajhna zaroori hai — ye bataata hai useEffect kab chalega. Empty array = sirf ek baar mount pe. Array mein value = jab wo value badley. No array = har render pe — dangerous!
+      </div>
+      <div class="section-label">💻 Code Example</div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">javascript</span>
+        </div>
+        <pre><span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="kw">function</span> <span class="fn">UserProfile</span>({ userId }) {
+  <span class="cm">// useState: [currentValue, setter]</span>
+  <span class="var">const</span> [user, setUser] = <span class="fn">useState</span>(<span class="kw">null</span>);
+  <span class="var">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">true</span>);
+
+  <span class="cm">// useEffect: runs after render</span>
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="cm">// Runs when userId changes</span>
+    <span class="fn">fetch</span>(<span class="str">`/api/users/<span class="arr">${</span>userId<span class="arr">}</span>`</span>)
+      .<span class="fn">then</span>(res =&gt; res.<span class="fn">json</span>())
+      .<span class="fn">then</span>(data =&gt; {
+        <span class="fn">setUser</span>(data);
+        <span class="fn">setLoading</span>(<span class="kw">false</span>);
+      });
+
+    <span class="cm">// Cleanup function (runs on unmount or before re-run)</span>
+    <span class="kw">return</span> () =&gt; {
+      <span class="cm">// cancel subscription, clear timers, etc.</span>
+    };
+  }, [userId]); <span class="cm">// dependency array</span>
+
+  <span class="kw">if</span> (loading) <span class="kw">return</span> &lt;<span class="prop">div</span>&gt;Loading...&lt;/<span class="prop">div</span>&gt;;
+  <span class="kw">return</span> &lt;<span class="prop">div</span>&gt;{user.<span class="prop">name</span>}&lt;/<span class="prop">div</span>&gt;;
+}</pre>
+      </div>
+    </div>
+    <div class="q-divider">
+      <span class="level-badge level-intermediate">Intermediate</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;">React Hooks — Kisi bhi React interview mein #1 topic</span>
+    </div>
+  </div>
+
+  <!-- ======== Q8 ======== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">8</div>
+      <div class="q-meta">
+        <div class="q-question">What is <code>Virtual DOM</code> in React and how does React reconciliation work?</div>
+        <div class="q-tags">
+          <span class="qtag react">React</span>
+          <span class="qtag intermediate">Intermediate</span>
+        </div>
+      </div>
+    </div>
+    <div class="q-body">
+      <div class="section-label">📖 Answer</div>
+      <div class="answer">
+        The <strong>Virtual DOM (VDOM)</strong> is a lightweight JavaScript representation of the actual DOM. React maintains a VDOM in memory and syncs it with the real DOM through a process called <em>reconciliation</em>.<br/><br/>
+        When state/props change: (1) React creates a new VDOM tree, (2) <em>diffs</em> it against the previous VDOM (using its diffing algorithm), (3) calculates the minimum DOM operations needed, and (4) <em>batches and applies</em> only those changes to the real DOM. This is far faster than manipulating the real DOM directly.
+      </div>
+      <div class="section-label">🗣 Explanation (Hinglish)</div>
+      <div class="hinglish">
+        <span class="hi-label">// Hinglish explanation</span>
+        Real DOM mein changes karna slow hota hai — browser ko reflow aur repaint karna padta hai. React ne ek jugaad socha — pehle memory mein ek "virtual" copy banao, wahan sab changes karo, phir compare karo real DOM se, aur sirf jo different hai wahi update karo.<br/><br/>
+        Ye process <strong>reconciliation</strong> kehlaata hai. React ka diffing algo O(n) complexity mein kaam karta hai. <strong>Key prop</strong> lists mein isliye important hai — React ko batata hai ki konsa element kaunsa hai efficiently track karne ke liye.<br/><br/>
+        React 18 mein <strong>Concurrent Mode</strong> aaya — ab React rendering ko interrupt aur prioritize kar sakta hai!
+      </div>
+      <div class="section-label">💻 Code Example</div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">javascript</span>
+        </div>
+        <pre><span class="cm">// Why key is important in lists — helps reconciliation</span>
+<span class="kw">function</span> <span class="fn">TodoList</span>({ todos }) {
+  <span class="kw">return</span> (
+    &lt;<span class="prop">ul</span>&gt;
+      {todos.<span class="fn">map</span>(todo =&gt; (
+        <span class="cm">// Without key: React repaints all items on change</span>
+        <span class="cm">// With unique key: React knows exactly what changed</span>
+        &lt;<span class="prop">li</span> key={todo.<span class="prop">id</span>}&gt;{todo.<span class="prop">text</span>}&lt;/<span class="prop">li</span>&gt;
+      ))}
+    &lt;/<span class="prop">ul</span>&gt;
+  );
+}
+
+<span class="cm">// ❌ Bad — using index as key (breaks on reorder/delete)</span>
+todos.<span class="fn">map</span>((todo, <span class="prop">index</span>) =&gt; &lt;<span class="prop">li</span> key={<span class="prop">index</span>}&gt;{todo}&lt;/<span class="prop">li</span>&gt;);
+
+<span class="cm">// ✅ Good — using stable unique id</span>
+todos.<span class="fn">map</span>(todo =&gt; &lt;<span class="prop">li</span> key={todo.<span class="prop">id</span>}&gt;{todo.<span class="prop">text</span>}&lt;/<span class="prop">li</span>&gt;);</pre>
+      </div>
+    </div>
+    <div class="q-divider">
+      <span class="level-badge level-intermediate">Intermediate</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;">Virtual DOM — React internals, performance discussions mein aata hai</span>
+    </div>
+  </div>
+
+  <!-- ======== Q9 ======== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">9</div>
+      <div class="q-meta">
+        <div class="q-question">What is the difference between <code>controlled</code> and <code>uncontrolled</code> components in React?</div>
+        <div class="q-tags">
+          <span class="qtag react">React</span>
+          <span class="qtag basic">Basic</span>
+        </div>
+      </div>
+    </div>
+    <div class="q-body">
+      <div class="section-label">📖 Answer</div>
+      <div class="answer">
+        <strong>Controlled Component</strong>: Form data is handled by React state. The input value is always driven by state — you control every keystroke via <code>onChange</code> and <code>value</code> props. React is the single source of truth.<br/><br/>
+        <strong>Uncontrolled Component</strong>: Form data is handled by the DOM itself. You read values using <code>ref</code> when needed (e.g., on submit). The DOM is the source of truth.
+      </div>
+      <div class="section-label">🗣 Explanation (Hinglish)</div>
+      <div class="hinglish">
+        <span class="hi-label">// Hinglish explanation</span>
+        <strong>Controlled</strong> = React boss hai. Har keystroke pe state update hoti hai, value always React ke haath mein rehti hai. Ye approach better hai validation, conditional rendering, aur form management libraries (React Hook Form, Formik) ke liye.<br/><br/>
+        <strong>Uncontrolled</strong> = DOM apna kaam khud karta hai, React sirf zaroorat padne par <code>ref</code> se value uthaa leta hai. Simple forms ya file inputs ke liye theek hai. File input hamesha uncontrolled hota hai — ye JS se set nahi ho sakta!
+      </div>
+      <div class="section-label">💻 Code Example</div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">javascript</span>
+        </div>
+        <pre><span class="kw">import</span> { useState, useRef } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="cm">// ✅ CONTROLLED — React controls value</span>
+<span class="kw">function</span> <span class="fn">ControlledForm</span>() {
+  <span class="var">const</span> [name, setName] = <span class="fn">useState</span>(<span class="str">""</span>);
+
+  <span class="kw">return</span> (
+    &lt;<span class="prop">input</span>
+      value={name}
+      onChange={e =&gt; <span class="fn">setName</span>(e.<span class="prop">target</span>.<span class="prop">value</span>)}
+      placeholder=<span class="str">"Enter name"</span>
+    /&gt;
+  );
+}
+
+<span class="cm">// UNCONTROLLED — DOM controls value, ref reads it</span>
+<span class="kw">function</span> <span class="fn">UncontrolledForm</span>() {
+  <span class="var">const</span> nameRef = <span class="fn">useRef</span>(<span class="kw">null</span>);
+
+  <span class="var">const</span> <span class="fn">handleSubmit</span> = () =&gt; {
+    console.<span class="fn">log</span>(nameRef.<span class="prop">current</span>.<span class="prop">value</span>); <span class="cm">// read on demand</span>
+  };
+
+  <span class="kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="prop">input</span> ref={nameRef} defaultValue=<span class="str">""</span> /&gt;
+      &lt;<span class="prop">button</span> onClick={handleSubmit}&gt;Submit&lt;/<span class="prop">button</span>&gt;
+    &lt;/&gt;
+  );
+}</pre>
+      </div>
+    </div>
+    <div class="q-divider">
+      <span class="level-badge level-basic">Basic</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;">Forms in React — Junior developer interviews mein common</span>
+    </div>
+  </div>
+
+  <!-- ======== Q10 ======== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">10</div>
+      <div class="q-meta">
+        <div class="q-question">What is <code>Promise</code> in JS? Explain <code>async/await</code> and how it differs from <code>.then()/.catch()</code>?</div>
+        <div class="q-tags">
+          <span class="qtag js">JavaScript</span>
+          <span class="qtag intermediate">Intermediate</span>
+        </div>
+      </div>
+    </div>
+    <div class="q-body">
+      <div class="section-label">📖 Answer</div>
+      <div class="answer">
+        A <strong>Promise</strong> represents an asynchronous operation that will complete in the future. It has three states: <em>pending</em>, <em>fulfilled</em>, or <em>rejected</em>.<br/><br/>
+        <strong>.then()/.catch()</strong> is the original Promise API — chains callbacks. Can lead to "promise chaining" which is still better than callback hell.<br/><br/>
+        <strong>async/await</strong> is <em>syntactic sugar</em> over Promises — it makes async code look and behave more like synchronous code. Under the hood, an <code>async</code> function always returns a Promise. <code>await</code> pauses execution until the Promise resolves (without blocking the main thread).
+      </div>
+      <div class="section-label">🗣 Explanation (Hinglish)</div>
+      <div class="hinglish">
+        <span class="hi-label">// Hinglish explanation</span>
+        Promise ek "I promise to give you data later" ki tarah hai. Teri API call gaye aur boli "bhai, main result baad mein dunga" — wo result Promise hai.<br/><br/>
+        <code>.then()/.catch()</code> — purana tarika, chaining se kaam karo. Theek hai par nested ho jaata hai kabhi kabhi.<br/><br/>
+        <code>async/await</code> — same kaam, par code seedha dikhta hai synchronous jaisa. Error handling ke liye <code>try/catch</code> use karo. Interview mein dono pata hone chahiye, real code mein async/await prefer karo.
+      </div>
+      <div class="section-label">💻 Code Example</div>
+      <div class="code-block">
+        <div class="code-bar">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-lang">javascript</span>
+        </div>
+        <pre><span class="cm">// --- Promise with .then/.catch ---</span>
+<span class="fn">fetch</span>(<span class="str">"/api/user"</span>)
+  .<span class="fn">then</span>(res =&gt; res.<span class="fn">json</span>())
+  .<span class="fn">then</span>(data =&gt; console.<span class="fn">log</span>(data))
+  .<span class="fn">catch</span>(err =&gt; console.<span class="fn">error</span>(err));
+
+<span class="cm">// --- Same with async/await ---</span>
+<span class="kw">async function</span> <span class="fn">getUser</span>() {
+  <span class="kw">try</span> {
+    <span class="var">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">"/api/user"</span>);
+    <span class="var">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+    console.<span class="fn">log</span>(data);
+  } <span class="kw">catch</span> (err) {
+    console.<span class="fn">error</span>(err);
+  }
+}
+
+<span class="cm">// Parallel requests — use Promise.all</span>
+<span class="kw">async function</span> <span class="fn">getAll</span>() {
+  <span class="var">const</span> [users, posts] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+    <span class="fn">fetch</span>(<span class="str">"/api/users"</span>).<span class="fn">then</span>(r =&gt; r.<span class="fn">json</span>()),
+    <span class="fn">fetch</span>(<span class="str">"/api/posts"</span>).<span class="fn">then</span>(r =&gt; r.<span class="fn">json</span>())
+  ]);
+  console.<span class="fn">log</span>(users, posts); <span class="cm">// both ready at same time ✅</span>
+}</pre>
+      </div>
+    </div>
+    <div class="q-divider">
+      <span class="level-badge level-intermediate">Intermediate</span>
+      <span style="font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;">Promises / Async — Kisi bhi JS interview mein top 3 topics mein</span>
+    </div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <div class="day-nav">
+    <a href="index.html" class="btn">← Back to Home</a>
+    <span class="center-day">Day 1 of 180 complete ✅</span>
+    <span class="btn" style="opacity:0.4;pointer-events:none">Day 2 → (Coming Soon)</span>
+  </div>
+
+</div>
+
+<footer>
+  Day 1 — JS + React · 10 Questions Done · MERN Crack Karo 🚇
+</footer>
+
+</body>
+</html>
